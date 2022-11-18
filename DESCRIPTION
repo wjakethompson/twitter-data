@@ -1,0 +1,19 @@
+Package: twitterarchive
+Title: twitterarchive is not really an R pakcage, but this is here to list
+    the dependencies for scrapping my twitter data.
+Version: 0.1
+Authors@R:
+    person(given = "W. Jake",
+           family = "Thompson",
+           role = c("aut", "cre"),
+           email = "wjakethompson@gmail.com")
+URL: https://github.com/wjakethompson/twitter-data
+Depends:
+    R (>= 4.0.0)
+Imports:
+    tidyverse,
+    lubridate,
+    rtweet,
+    here,
+    fs
+Encoding: UTF-8
