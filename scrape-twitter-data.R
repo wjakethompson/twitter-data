@@ -1,0 +1,40 @@
+# Setup ------------------------------------------------------------------------
+library(tidyverse)
+library(lubridate)
+library(rtweet)
+library(here)
+library(fs)
+
+if (!dir_exists("twitter-data")) dir_create("twitter-data")
+
+# Get tweets -------------------------------------------------------------------
+## Initial scrape
+# my_tweets <- get_timeline(user = "wjakethompson", n = Inf,
+#                           retryonratelimit = TRUE)
+# write_csv(my_tweets, "twitter-data/my-tweets.csv")
+
+## Check for new tweets
+
+
+# Get likes --------------------------------------------------------------------
+## Initial scrape
+# my_likes <- get_favorites(user = "wjakethompson", n = Inf,
+#                           retryonratelimit = TRUE)
+# write_csv(my_likes, "twitter-data/my-likes.csv")
+
+## Check for new likes
+my_likes <- read_csv("twitter-data/my-likes.csv",
+                     col_types = cols(id_str = col_character(),
+                                      in_reply_to_status_id_str = col_character(),
+                                      in_reply_to_user_id_str = col_character(),
+                                      quoted_status_id_str = col_character()))
+new_likes <- get_favorites(user = "wjakethompson", n = 100) %>% 
+  anti_join(my_likes, by = "id")
+
+if (nrow(new_likes) > 0) {
+  bind_rows(new_likes, my_likes) %>% 
+    write_csv("twitter-data/my-likes.csv")
+  
+  system(paste0("git add twitter-data/my-likes.csv"))
+  system(paste0("git commit -m 'add new likes ", today(), "'"))
+}
