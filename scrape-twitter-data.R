@@ -7,6 +7,14 @@ library(fs)
 
 if (!dir_exists("twitter-data")) dir_create("twitter-data")
 
+if (interactive()) {
+  auth_as("twitter-archive")
+} else {
+  auth <- rtweet_app(bearer_token = Sys.getenv("RTWEET_BEARER"))
+  auth_as(auth)
+}
+
+
 # Get tweets -------------------------------------------------------------------
 ## Initial scrape
 # my_tweets <- get_timeline(user = "wjakethompson", n = Inf,
@@ -14,7 +22,21 @@ if (!dir_exists("twitter-data")) dir_create("twitter-data")
 # write_csv(my_tweets, "twitter-data/my-tweets.csv")
 
 ## Check for new tweets
+my_tweets <- read_csv("twitter-data/my-tweets.csv",
+                      col_types = cols(id_str = col_character(),
+                                       in_reply_to_status_id_str = col_character(),
+                                       in_reply_to_user_id_str = col_character(),
+                                       quoted_status_id_str = col_character()))
+new_tweets <- get_timeline(user = "wjakethompson", n = 100) %>% 
+  anti_join(my_tweets, by = "id")
 
+if (nrow(new_tweets) > 0) {
+  bind_rows(new_tweets, my_tweets) %>% 
+    write_csv("twitter-data/my-tweets.csv")
+  
+  system(paste0("git add twitter-data/my-tweets.csv"))
+  system(paste0("git commit -m 'add new tweets ", today(), "'"))
+}
 
 # Get likes --------------------------------------------------------------------
 ## Initial scrape
