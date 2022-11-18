@@ -8,7 +8,7 @@ library(fs)
 if (!dir_exists("twitter-data")) dir_create("twitter-data")
 
 if (interactive()) {
-  auth_as("twitter-archive")
+  auth <- auth_as("twitter-archive")
 } else {
   auth <- rtweet_app(bearer_token = Sys.getenv("RTWEET_BEARER"))
   auth_as(auth)
@@ -30,7 +30,7 @@ my_tweets <- read_csv("twitter-data/my-tweets.csv",
 
 message("Checking for new tweets")
 
-new_tweets <- get_timeline(user = "wjakethompson", n = 100) %>% 
+new_tweets <- get_timeline(user = "wjakethompson", n = 100, token = auth) %>% 
   anti_join(my_tweets, by = "id")
 
 if (nrow(new_tweets) > 0) {
@@ -56,7 +56,7 @@ my_likes <- read_csv("twitter-data/my-likes.csv",
 
 message("Checking for new likes")
 
-new_likes <- get_favorites(user = "wjakethompson", n = 100) %>% 
+new_likes <- get_favorites(user = "wjakethompson", n = 100, token = auth) %>% 
   anti_join(my_likes, by = "id")
 
 if (nrow(new_likes) > 0) {
