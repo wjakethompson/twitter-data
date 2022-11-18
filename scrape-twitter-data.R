@@ -27,6 +27,9 @@ my_tweets <- read_csv("twitter-data/my-tweets.csv",
                                        in_reply_to_status_id_str = col_character(),
                                        in_reply_to_user_id_str = col_character(),
                                        quoted_status_id_str = col_character()))
+
+message("Checking for new tweets")
+
 new_tweets <- get_timeline(user = "wjakethompson", n = 100) %>% 
   anti_join(my_tweets, by = "id")
 
@@ -50,6 +53,9 @@ my_likes <- read_csv("twitter-data/my-likes.csv",
                                       in_reply_to_status_id_str = col_character(),
                                       in_reply_to_user_id_str = col_character(),
                                       quoted_status_id_str = col_character()))
+
+message("Checking for new likes")
+
 new_likes <- get_favorites(user = "wjakethompson", n = 100) %>% 
   anti_join(my_likes, by = "id")
 
